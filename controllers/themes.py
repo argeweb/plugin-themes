@@ -10,6 +10,8 @@ from google.appengine.api import namespace_manager
 from argeweb import route_with, route_menu, route
 from argeweb import Controller, scaffold
 import datetime
+import json
+import os
 
 
 class Themes(Controller):
@@ -40,37 +42,46 @@ class Themes(Controller):
             }
 
     @route
-    @route_menu(list_name=u"backend", text=u"主題樣式", sort=9995, icon="gears", group=u"系統設定")
+    @route_menu(list_name=u"backend", text=u"主題樣式", sort=299, group=u"視覺形象")
     def admin_pickup_list(self):
         self.context["current_theme"] = self.theme
         self.meta.pagination_limit = 48
-        namespace = self.namespace
-        model = self.meta.Model
-        def get_list(self):
-            return model.get_list(namespace)
-        self.scaffold.query_factory = get_list
+        self.scaffold.query_factory = self.get_themes_list
         namespace_manager.set_namespace("shared.theme")
         return scaffold.list(self)
 
-    @route_menu(list_name=u"backend", text=u"樣式設定", sort=9993, icon="gears", group=u"系統設定")
-    def admin_list(self):
-        namespace_manager.set_namespace("shared.theme")
-        return scaffold.list(self)
+    @staticmethod
+    def get_themes_list(self):
+        def get_list():
+            themes_list = []
+            themes_dir = None
+            dirs = []
+            try:
+                themes_dir = os.path.abspath(
+                    os.path.join(os.path.dirname(__file__), '..', '..', '..', 'themes'))
+                dirs = os.listdir(themes_dir)
+            except:
+                pass
+            for dirPath in dirs:
+                if dirPath.find(".") >= 0:
+                    continue
+                file_path = os.path.join(themes_dir, dirPath, "theme.json")
+                if os.path.exists(file_path) is False:
+                    continue
+                f = open(file_path, 'r')
+                data = json.load(f)
+                themes_list.append({
+                    "theme_name": dirPath,
+                    "theme_title": data["name"] if "name" in data else dirPath,
+                    "author": data["author"] if "author" in data else "",
+                    "using": data["using"] if "using" in data else [],
+                    "exclusive": data["exclusive"] if "exclusive" in data else "all"
+                })
+            if len(themes_list) is 0:
+                themes_list = [
+                    {"theme_name": "default", "theme_title": u"預設樣式", "using":[]}
+                ]
+            return themes_list
+        return get_list()
 
-    def admin_add(self):
-        namespace_manager.set_namespace("shared.theme")
-        return scaffold.add(self)
 
-    def admin_edit(self, key):
-        namespace_manager.set_namespace("shared.theme")
-        self.context["item"] = self.util.decode_key(key).get()
-        return scaffold.edit(self, key)
-
-    def admin_view(self, key):
-        namespace_manager.set_namespace("shared.theme")
-        self.context["item"] = self.util.decode_key(key).get()
-        return scaffold.edit(self, key)
-
-    def admin_delete(self, key):
-        namespace_manager.set_namespace("shared.theme")
-        return scaffold.delete(self, key)

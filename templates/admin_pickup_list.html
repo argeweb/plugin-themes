@@ -19,11 +19,11 @@
     {% for item in list %}
         {%- set n = n + 1 -%}
         <div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
-            <div class="file theme {% if item.theme_key == current_theme %}current_theme{% endif %}" id="theme_item_{{ item.theme_key }}">
+            <div class="file theme {% if item.theme_name == current_theme %}current_theme{% endif %}" id="theme_item_{{ item.theme_name }}">
                 <div class="ribbon"><span>目前使用的樣式</span></div>
                     <div class="image" style="background-image: url('/{{ item.theme_key }}/img/theme.png');"></div>
                     <div class="file-name">
-                        <a href="/admin/themes/set.json?theme_key={{ item.theme_key }}" class="btn-json btn btn-lg btn-success" style="float: right;" data-callback="change_theme">套用</a>
+                        <a href="/admin/themes/set.json?theme_key={{ item.theme_name }}" class="btn-json btn btn-lg btn-success" style="float: right;" data-callback="change_theme">套用</a>
                         <span class="file-name-span">{{ item.theme_name }}{% if item.exclusive != "all" %} - 專屬{% endif %}<br></span>
                         <small class="hidden-sm hidden-xs">{% if item.content %}{{ item.content }}{% endif %}</small>
                     </div>
