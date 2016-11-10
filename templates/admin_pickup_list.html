@@ -1,0 +1,47 @@
+{% import "backend/macros.html" as s with context %}
+{% extends s.layout() %}
+
+{% block layout_content %}
+{% set list = context[scaffolding.plural] %}
+<div class="ibox-content m-b-sm border-bottom">
+    <div class="p-xs">
+        <div class="pull-left m-r-md">
+            <i class="icon text-navy mid-icon">photo</i>
+        </div>
+        <h2>主題樣式</h2>
+        <span>選擇並設定預設的前台主題樣式。</span>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content">
+    <div class="row files-box">
+    {%- set n = 0 -%}
+    {% for item in list %}
+        {%- set n = n + 1 -%}
+        <div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
+            <div class="file theme {% if item.theme_key == current_theme %}current_theme{% endif %}" id="theme_item_{{ item.theme_key }}">
+                <div class="ribbon"><span>目前使用的樣式</span></div>
+                    <div class="image" style="background-image: url('/{{ item.theme_key }}/img/theme.png');"></div>
+                    <div class="file-name">
+                        <a href="/admin/themes/set.json?theme_key={{ item.theme_key }}" class="btn-json btn btn-lg btn-success" style="float: right;" data-callback="change_theme">套用</a>
+                        <span class="file-name-span">{{ item.theme_name }}{% if item.exclusive != "all" %} - 專屬{% endif %}<br></span>
+                        <small class="hidden-sm hidden-xs">{% if item.content %}{{ item.content }}{% endif %}</small>
+                    </div>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+    {{s.next_page_link()}}
+</div>
+{% endblock %}
+{% block layout_scripts -%}
+<script>
+    function change_theme(data){
+        if (data.info == "done"){
+            $(".theme.current_theme").removeClass("current_theme");
+            $("#theme_item_" +data.theme).addClass("current_theme");
+            show_message("已變更，請重新整理前台頁面...", 800);
+        }
+    }
+</script>
+{%- endblock %}
