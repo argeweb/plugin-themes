@@ -22,15 +22,19 @@ class Themes(Controller):
     class Scaffold:
         display_properties_in_list = ("theme_name", "theme_key")
 
-
     @route_with('/admin/themes/set.json')
     def admin_get_url(self):
         self.meta.change_view('json')
         namespace_manager.set_namespace("shared.theme")
         theme_key = self.params.get_string("theme_key", '')
         model = self.meta.Model
-        is_in_list = model.check_in_list(self.namespace, theme_key=theme_key)
-        if is_in_list:
+        theme_list = self.get_themes_list(self)
+        is_find = False
+        for theme in theme_list:
+            if theme_key == theme["theme_name"] and (
+                    theme["exclusive"].find(theme_key) or theme["exclusive"] == u"all"):
+                is_find = True
+        if is_find:
             self.settings.set_theme(self.server_name, self.namespace, theme_key)
             self.context['data'] = {
                 'info': "done",
@@ -51,7 +55,7 @@ class Themes(Controller):
         return scaffold.list(self)
 
     @staticmethod
-    def get_themes_list(self):
+    def get_themes_list(self, other=None):
         def get_list():
             themes_list = []
             themes_dir = None
@@ -71,15 +75,15 @@ class Themes(Controller):
                 f = open(file_path, 'r')
                 data = json.load(f)
                 themes_list.append({
-                    "theme_name": dirPath,
-                    "theme_title": data["name"] if "name" in data else dirPath,
-                    "author": data["author"] if "author" in data else "",
+                    "theme_name": u"" + dirPath,
+                    "theme_title": data["name"] if "name" in data else u"" + dirPath,
+                    "author": data["author"] if "author" in data else u"",
                     "using": data["using"] if "using" in data else [],
-                    "exclusive": data["exclusive"] if "exclusive" in data else "all"
+                    "exclusive": data["exclusive"] if "exclusive" in data else u"all"
                 })
             if len(themes_list) is 0:
                 themes_list = [
-                    {"theme_name": "default", "theme_title": u"預設樣式", "using":[]}
+                    {"theme_name": u"default", u"theme_title": u"預設樣式", "using":[]}
                 ]
             return themes_list
         return get_list()
