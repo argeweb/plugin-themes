@@ -28,7 +28,7 @@ class Themes(Controller):
         namespace_manager.set_namespace("shared")
         theme_title = self.params.get_string("theme_title", '')
         theme_name = self.params.get_string("theme_name", '')
-        exclusive = self.params.get_string("exclusive", '')
+        exclusive = self.params.get_string("exclusive", self.namespace)
         author = self.params.get_string("author", '')
         using = self.params.get_string("using", '')
         model = self.meta.Model
