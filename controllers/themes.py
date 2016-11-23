@@ -135,4 +135,21 @@ class Themes(Controller):
             return themes_list
         return get_list()
 
-
+    @route
+    def admin_get_files_md5(self):
+        from plugins.file.models.file_model import FileModel
+        theme = self.params.get_string("theme")
+        self.meta.change_view('json')
+        model = FileModel
+        self.meta.Model= model
+        def query_factory_with_identifier(self):
+            return model.query(model.theme == theme, model.is_collection == False).order(-model.path)
+        self.scaffold.query_factory = query_factory_with_identifier
+        scaffold.list(self)
+        data_list = []
+        for item in self.context[self.scaffold.plural]:
+            data_list.append({"md5": item.last_md5, "path": item.path})
+        self.context["data"] = {
+            "files": data_list,
+            "next": None
+        }
