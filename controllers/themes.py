@@ -30,9 +30,18 @@ class Themes(Controller):
         theme_name = self.params.get_string("theme_name", '')
         exclusive = self.params.get_string("exclusive", self.namespace)
         author = self.params.get_string("author", '')
+        thumbnail = self.params.get_string("thumbnail", '/assets/themes/%s/img/theme.png' % theme_name)
         using = self.params.get_string("using", '')
         model = self.meta.Model
         is_find = model.check_in_list(self.namespace, theme_name=theme_name)
+        if thumbnail.startswith("/"):
+            thumbnail = thumbnail[1:]
+        if thumbnail.startswith("themes"):
+            thumbnail = "assets/" + thumbnail
+        if thumbnail.startswith("assets/themes") is False:
+            thumbnail = 'assets/themes/%s/%s' % (theme_name, thumbnail)
+        thumbnail = "/" + thumbnail
+        self.logging(thumbnail)
         if is_find:
             self.context['data'] = {
                 'info': "done",
@@ -49,6 +58,7 @@ class Themes(Controller):
         n.theme_name = theme_name
         n.exclusive = exclusive
         n.author = author
+        n.thumbnail = thumbnail
         n.using = using
         n.put()
 
@@ -121,6 +131,16 @@ class Themes(Controller):
                     continue
                 f = open(file_path, 'r')
                 data = json.load(f)
+                thumbnail = '/assets/themes/%s/img/theme.png' % dirPath
+                if "thumbnail" in data:
+                    thumbnail = data["thumbnail"]
+                if thumbnail.startswith("/"):
+                    thumbnail = thumbnail[1:]
+                if thumbnail.startswith("themes"):
+                    thumbnail = "assets/" + thumbnail
+                if thumbnail.startswith("assets/themes") is False:
+                    thumbnail = 'assets/themes/%s/%s' % (dirPath, thumbnail)
+                thumbnail = "/" + thumbnail
                 themes_list.append({
                     "theme_name": u"" + dirPath,
                     "theme_title": data["name"] if "name" in data else u"" + dirPath,

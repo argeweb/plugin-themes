@@ -18,6 +18,7 @@ class ThemesModel(BasicModel):
     is_enable = Fields.BooleanProperty(default=True, verbose_name=u"顯示於前台")
     author = Fields.StringProperty(verbose_name=u"作者")
     using = Fields.TextProperty(verbose_name=u"使用的欄位")
+    thumbnail = Fields.StringProperty(verbose_name=u"縮圖位置")
 
     @classmethod
     def find_by_theme_name(cls, theme_name):
