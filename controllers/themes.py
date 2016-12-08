@@ -58,6 +58,7 @@ class Themes(Controller):
         n.theme_name = theme_name
         n.exclusive = exclusive
         n.author = author
+        n.in_datastore = True
         n.thumbnail = thumbnail
         n.using = using
         n.put()
@@ -81,7 +82,7 @@ class Themes(Controller):
             }
 
     @route
-    @route_menu(list_name=u"backend", text=u"主題樣式", sort=299, group=u"視覺形象")
+    @route_menu(list_name=u"backend", text=u"主題樣式", sort=9600, group=u"視覺形象", need_hr_parent=True)
     def admin_pickup_list(self):
         self.context["current_theme"] = self.theme
         self.meta.pagination_limit = 100
@@ -108,6 +109,7 @@ class Themes(Controller):
                 n.exclusive = item_p["exclusive"]
                 n.author = item_p["author"]
                 n.using = json.dumps(item_p["using"])
+                n.in_datastore = False
                 n.put()
                 self.context["new_item_list"].append(n)
 

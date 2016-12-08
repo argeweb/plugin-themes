@@ -21,7 +21,7 @@
         <div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
             <div class="file theme {% if item.theme_name == current_theme %}current_theme{% endif %}" id="theme_item_{{ item.theme_name }}">
                 <div class="ribbon"><span>目前使用的樣式</span></div>
-                    <div class="image" style="background-image: url('{{ item.thumbnail }}');"></div>
+                    <div class="image thumbnail" data-theme-name="{{ item.theme_name }}" data-thumbnail="{% if item.thumbnail %}{{ item.thumbnail }}{% endif %}" data-in-datastore="{{ item.in_datastore }}"></div>
                     <div class="file-name">
                         <a href="/admin/themes/set.json?theme_name={{ item.theme_name }}" class="btn-json btn btn-lg btn-success" style="float: right;" data-callback="change_theme">套用</a>
                         <span class="file-name-span">{{ item.theme_name }}{% if item.exclusive != "all" %} - 專屬{% endif %}<br></span>
@@ -43,5 +43,14 @@
             show_message("已變更，請重新整理前台頁面...", 800);
         }
     }
+    $(".thumbnail").each(function(){
+        var th = $(this).data("thumbnail");
+        if (th == "") return;
+        if ($(this).data("in-datastore") == "false" || th.indexOf("assets/themes/") > -1 || th.indexOf("/assets/themes/") > -1){
+           $(this).css({"background-image": "url(" + $(this).data("thumbnail") + ")"});
+        }else{
+           $(this).css({"background-image": "url(/themes/" + $(this).data("theme-name") + "/" + $(this).data("thumbnail") + ")"});
+        }
+    })
 </script>
 {%- endblock %}

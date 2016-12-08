@@ -19,6 +19,7 @@ class ThemesModel(BasicModel):
     author = Fields.StringProperty(verbose_name=u"作者")
     using = Fields.TextProperty(verbose_name=u"使用的欄位")
     thumbnail = Fields.StringProperty(verbose_name=u"縮圖位置")
+    in_datastore = Fields.BooleanProperty(default=False, verbose_name=u"是否位於 DataStore")
 
     @classmethod
     def find_by_theme_name(cls, theme_name):
