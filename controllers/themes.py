@@ -41,7 +41,7 @@ class Themes(Controller):
         if thumbnail.startswith('assets/themes') is False:
             thumbnail = 'assets/themes/%s/%s' % (theme_name, thumbnail)
         thumbnail = '/' + thumbnail
-        self.logging(thumbnail)
+        self.logging.info(thumbnail)
         if is_find:
             self.context['data'] = {
                 'info': 'done',
