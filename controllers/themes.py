@@ -84,18 +84,19 @@ class Themes(Controller):
     @route
     @route_menu(list_name=u'backend', text=u'主題樣式', sort=9600, group=u'視覺形象', need_hr_parent=True)
     def admin_pickup_list(self):
-        self.context['current_theme'] = self.theme
-        self.meta.pagination_limit = 100
-        theme_list = self.get_themes_list(self)
-        model = self.meta.Model
-
-        def query_factory_with_identifier(self):
+        def query_factory_with_identifier(controller):
+            model = controller.meta.Modelta.Model
             return model.query(
                 model.exclusive.IN([self.namespace, u'all'])
             ).order(-model.sort, -model._key)
-        self.scaffold.query_factory = query_factory_with_identifier
         namespace_manager.set_namespace('shared')
+        self.scaffold.query_factory = query_factory_with_identifier
+        self.meta.pagination_limit = 100
         scaffold.list(self)
+
+        self.context['current_theme'] = self.theme
+        theme_list = self.get_themes_list(self)
+
         self.context['new_item_list'] = []
         for item_p in theme_list:
             is_not_find = True
