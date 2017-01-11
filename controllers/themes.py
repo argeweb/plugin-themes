@@ -85,7 +85,7 @@ class Themes(Controller):
     @route_menu(list_name=u'backend', text=u'主題樣式', sort=9600, group=u'視覺形象', need_hr_parent=True)
     def admin_pickup_list(self):
         def query_factory_with_identifier(controller):
-            model = controller.meta.Modelta.Model
+            model = controller.meta.Model
             return model.query(
                 model.exclusive.IN([self.namespace, u'all'])
             ).order(-model.sort, -model._key)
