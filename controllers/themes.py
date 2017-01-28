@@ -20,7 +20,7 @@ class Themes(Controller):
         pagination_limit = 10
         
     class Scaffold:
-        display_properties_in_list = ('theme_name', 'theme_name')
+        display_in_list = ('theme_name', 'theme_name')
 
     @route
     def admin_upload(self):
