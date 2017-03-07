@@ -17,7 +17,7 @@ import os
 class Themes(Controller):
     class Meta:
         pagination_actions = ('list', 'pickup_list',)
-        pagination_limit = 10
+        pagination_limit = 50
         
     class Scaffold:
         display_in_list = ('theme_name', 'theme_name')
@@ -170,5 +170,19 @@ class Themes(Controller):
             data_list.append({'md5': item.last_md5, 'path': item.path})
         self.context['data'] = {
             'files': data_list,
+            'next': None
+        }
+
+    @route
+    def admin_delete_theme(self):
+        from plugins.file.models.file_model import FileModel
+        from google.appengine.ext import ndb
+        self.meta.change_view('json')
+        theme = self.params.get_string('theme')
+        model = FileModel
+        multi_keys = model.query(model.theme == theme).fetch(keys_only=True)
+        ndb.delete_multi(multi_keys)
+        self.context['data'] = {
+            'files': [],
             'next': None
         }
