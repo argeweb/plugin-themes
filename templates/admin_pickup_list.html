@@ -23,7 +23,7 @@
                     <div class="image" data-theme-name="{{ item.theme_name }}" data-thumbnail="{% if item.thumbnail %}{{ item.thumbnail }}{% endif %}" data-in-datastore="{{ item.in_datastore }}"></div>
                     <div class="file-name theme-name">
                         <a href="/admin/themes/set.json?theme_name={{ item.theme_name }}" class="btn-json btn btn-lg btn-success" style="float: right;" data-callback="change_theme">套用</a>
-                        <span class="file-name-span">{{ item.theme_name }}{% if item.exclusive != "all" %} - 專屬{% endif %}<br></span>
+                        <span class="file-name-span">{{ item.theme_title }}{% if item.exclusive != "all" %} - 專屬{% endif %}<br></span>
                         <small class="hidden-sm hidden-xs">{% if item.content %}{{ item.content }}{% endif %}</small>
                     </div>
             </div>

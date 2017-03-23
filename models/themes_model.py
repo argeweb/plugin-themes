@@ -13,7 +13,7 @@ from google.appengine.ext import ndb
 
 class ThemesModel(BasicModel):
     theme_title = Fields.StringProperty(required=True, verbose_name=u'樣式名稱')
-    theme_name = Fields.StringProperty(required=True, verbose_name=u'系統編號')
+    theme_name = Fields.StringProperty(required=True, verbose_name=u'識別名稱')
     exclusive = Fields.StringProperty(default='all', verbose_name=u'專屬項目')
     is_enable = Fields.BooleanProperty(default=True, verbose_name=u'顯示於前台')
     author = Fields.StringProperty(verbose_name=u'作者')
