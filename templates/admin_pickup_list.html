@@ -39,7 +39,7 @@
         if (data.info == "done"){
             $(".theme.current_theme").removeClass("current_theme");
             $("#theme_item_" +data.theme).addClass("current_theme");
-            show_message("已變更，請重新整理前台頁面...", 800);
+            alert("已變更，請重新整理前台頁面...", 800);
         }
     }
     $(".thumbnail").each(function(){

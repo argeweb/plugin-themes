@@ -17,7 +17,6 @@ import os
 class Themes(Controller):
     class Meta:
         pagination_actions = ('list', 'pickup_list',)
-        pagination_limit = 50
         
     class Scaffold:
         display_in_list = ('theme_name', 'theme_name')
