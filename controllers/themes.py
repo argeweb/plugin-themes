@@ -81,7 +81,7 @@ class Themes(Controller):
             }
 
     @route
-    @route_menu(list_name=u'backend', text=u'主題樣式', sort=9600, group=u'視覺形象', need_hr_parent=True)
+    @route_menu(list_name=u'backend', text=u'主題樣式', sort=9941, group=u'系統設定', need_hr_parent=True)
     def admin_pickup_list(self):
         def query_factory_with_identifier(controller):
             model = controller.meta.Model
