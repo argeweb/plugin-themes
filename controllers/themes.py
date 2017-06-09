@@ -31,8 +31,7 @@ class Themes(Controller):
         author = self.params.get_string('author', '')
         thumbnail = self.params.get_string('thumbnail', '/assets/themes/%s/img/theme.png' % theme_name)
         using = self.params.get_string('using', '')
-        model = self.meta.Model
-        is_find = model.check_in_list(self.namespace, theme_name=theme_name)
+        is_find = self.meta.Model.check_in_list(self.namespace, theme_name=theme_name)
         if thumbnail.startswith('/'):
             thumbnail = thumbnail[1:]
         if thumbnail.startswith('themes'):
@@ -46,13 +45,13 @@ class Themes(Controller):
                 'info': 'done',
                 'theme': theme_name
             }
-            n = model.find_by_theme_name(theme_name)
+            n = self.meta.Model.find_by_theme_name(theme_name)
         else:
             self.context['data'] = {
                 'info': 'create',
                 'theme': theme_name
             }
-            n = model()
+            n = self.meta.Model()
         n.theme_title = theme_title
         n.theme_name = theme_name
         n.exclusive = exclusive
@@ -67,8 +66,7 @@ class Themes(Controller):
         self.meta.change_view('json')
         namespace_manager.set_namespace('shared')
         theme_name = self.params.get_string('theme_name', '')
-        model = self.meta.Model
-        is_find = model.check_in_list(self.namespace, theme_name=theme_name)
+        is_find = self.meta.Model.check_in_list(self.namespace, theme_name=theme_name)
         if is_find:
             self.settings.set_theme(self.server_name, self.namespace, theme_name)
             self.context['data'] = {
@@ -162,8 +160,7 @@ class Themes(Controller):
         from plugins.file.models.file_model import FileModel
         self.meta.change_view('json')
         theme = self.params.get_string('theme')
-        model = FileModel
-        query = model.query(model.theme == theme, model.is_collection == False).order(-model.path)
+        query = FileModel.query(FileModel.theme == theme, FileModel.is_collection == False).order(-FileModel.path)
         data_list = []
         for item in query.fetch():
             data_list.append({'md5': item.last_md5, 'path': item.path})
@@ -178,8 +175,7 @@ class Themes(Controller):
         from google.appengine.ext import ndb
         self.meta.change_view('json')
         theme = self.params.get_string('theme')
-        model = FileModel
-        multi_keys = model.query(model.theme == theme).fetch(keys_only=True)
+        multi_keys = FileModel.query(FileModel.theme == theme).fetch(keys_only=True)
         ndb.delete_multi(multi_keys)
         self.context['data'] = {
             'files': [],
