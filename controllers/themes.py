@@ -19,7 +19,22 @@ class Themes(Controller):
         pagination_actions = ('list', 'pickup_list',)
         
     class Scaffold:
-        display_in_list = ('theme_name', 'theme_name')
+        display_in_list = ['theme_name', 'theme_name']
+
+    @route
+    def admin_list(self):
+        namespace_manager.set_namespace('shared')
+        return scaffold.list(self)
+
+    @route
+    def admin_edit(self, key):
+        namespace_manager.set_namespace('shared')
+        return scaffold.edit(self, key)
+
+    @route
+    def admin_view(self, key):
+        namespace_manager.set_namespace('shared')
+        return scaffold.view(self, key)
 
     @route
     def admin_upload(self):
@@ -27,7 +42,9 @@ class Themes(Controller):
         namespace_manager.set_namespace('shared')
         theme_title = self.params.get_string('theme_title', '')
         theme_name = self.params.get_string('theme_name', '')
-        exclusive = self.params.get_string('exclusive', self.namespace)
+        exclusive = self.params.get_string('exclusive', 'this')
+        if exclusive is not u'all':
+            exclusive = self.namespace
         author = self.params.get_string('author', '')
         thumbnail = self.params.get_string('thumbnail', '/assets/themes/%s/img/theme.png' % theme_name)
         using = self.params.get_string('using', '')
@@ -40,26 +57,20 @@ class Themes(Controller):
             thumbnail = 'assets/themes/%s/%s' % (theme_name, thumbnail)
         thumbnail = '/' + thumbnail
         self.logging.info(thumbnail)
-        if is_find:
-            self.context['data'] = {
-                'info': 'done',
-                'theme': theme_name
-            }
-            n = self.meta.Model.find_by_theme_name(theme_name)
-        else:
-            self.context['data'] = {
-                'info': 'create',
-                'theme': theme_name
-            }
-            n = self.meta.Model()
-        n.theme_title = theme_title
-        n.theme_name = theme_name
-        n.exclusive = exclusive
-        n.author = author
-        n.in_datastore = True
-        n.thumbnail = thumbnail
-        n.using = using
-        n.put()
+        self.fire(
+            event_name='update_theme_information',
+            theme_title=theme_title,
+            theme_name=theme_name,
+            exclusive=exclusive,
+            author=author,
+            in_datastore=True,
+            thumbnail=thumbnail,
+            using=using
+        )
+        self.context['data'] = {
+            'info': is_find and 'done' or 'create',
+            'theme': theme_name
+        }
 
     @route_with('/admin/themes/set.json')
     def admin_get_url(self):
@@ -67,6 +78,7 @@ class Themes(Controller):
         namespace_manager.set_namespace('shared')
         theme_name = self.params.get_string('theme_name', '')
         is_find = self.meta.Model.check_in_list(self.namespace, theme_name=theme_name)
+
         if is_find:
             self.settings.set_theme(self.server_name, self.namespace, theme_name)
             self.context['data'] = {
@@ -79,7 +91,7 @@ class Themes(Controller):
             }
 
     @route
-    @route_menu(list_name=u'backend', text=u'主題樣式', sort=9941, group=u'系統設定', need_hr_parent=True)
+    @route_menu(list_name=u'system', group=u'系統設定', text=u'主題樣式', sort=9999, icon=u'photo')
     def admin_pickup_list(self):
         def query_factory_with_identifier(controller):
             model = controller.meta.Model

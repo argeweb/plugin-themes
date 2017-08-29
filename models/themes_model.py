@@ -14,12 +14,12 @@ from google.appengine.ext import ndb
 class ThemesModel(BasicModel):
     theme_title = Fields.StringProperty(required=True, verbose_name=u'樣式名稱')
     theme_name = Fields.StringProperty(required=True, verbose_name=u'識別名稱')
-    exclusive = Fields.StringProperty(default='all', verbose_name=u'專屬項目')
-    is_enable = Fields.BooleanProperty(default=True, verbose_name=u'顯示於前台')
+    exclusive = Fields.StringProperty(verbose_name=u'專屬項目', default='all')
+    is_enable = Fields.BooleanProperty(verbose_name=u'顯示於前台', default=True)
     author = Fields.StringProperty(verbose_name=u'作者')
     using = Fields.TextProperty(verbose_name=u'使用的欄位')
     thumbnail = Fields.StringProperty(verbose_name=u'縮圖位置')
-    in_datastore = Fields.BooleanProperty(default=False, verbose_name=u'是否位於 DataStore')
+    in_datastore = Fields.BooleanProperty(verbose_name=u'是否位於 DataStore', default=False)
 
     @classmethod
     def find_by_theme_name(cls, theme_name):

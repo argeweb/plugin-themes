@@ -1,8 +1,6 @@
 {% extends "backend/list_layout.html" %}
-{% block layout_header %}{% endblock %}
-{% block layout_content %}
-{% set list = context[scaffolding.plural] %}
-<div class="ibox-content m-b-sm border-bottom page-header-big">
+{% block page_big_header %}
+<div class="ibox-content m-b-sm border-bottom page-big-header">
     <div class="p-xs">
         <div class="pull-left m-r-md">
             <i class="icon text-navy mid-icon">photo</i>
@@ -11,8 +9,12 @@
         <span>選擇並設定預設的前台主題樣式。</span>
     </div>
 </div>
+{% endblock %}
 
-<div class="wrapper wrapper-content">
+{% block page_header %}{% endblock %}
+
+{% block page_content %}
+{% set list = context[scaffolding.plural] %}
     <div class="row files-box">
     {%- set n = 0 -%}
     {% for item in list %}
@@ -20,7 +22,7 @@
         <div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
             <div class="file theme {% if item.theme_name == current_theme %}current_theme{% endif %}" id="theme_item_{{ item.theme_name }}">
                 <div class="ribbon"><span>目前使用的樣式</span></div>
-                    <div class="image" data-theme-name="{{ item.theme_name }}" data-thumbnail="{% if item.thumbnail %}{{ item.thumbnail }}{% endif %}" data-in-datastore="{{ item.in_datastore }}"></div>
+                    <div class="image" data-theme-name="{{ item.theme_name }}" data-thumbnail="{% if item.thumbnail %}{{ item.thumbnail }}{% else %}https://placeholdit.imgix.net/~text?txtsize=22&txt={{ item.theme_name }}&w=240&h=180&bg=cccccc&txtclr=333{% endif %}" data-in-datastore="{{ item.in_datastore }}"></div>
                     <div class="file-name theme-name">
                         <a href="/admin/themes/set.json?theme_name={{ item.theme_name }}" class="btn-json btn btn-lg btn-success" style="float: right;" data-callback="change_theme">套用</a>
                         <span class="file-name-span">{{ item.theme_title }}{% if item.exclusive != "all" %} - 專屬{% endif %}<br></span>
@@ -31,9 +33,8 @@
     {% endfor %}
     </div>
     {{ s.next_page_link() }}
-</div>
 {% endblock %}
-{% block layout_scripts -%}
+{% block page_scripts -%}
 <script>
     function change_theme(data){
         if (data.info == "done"){
@@ -42,14 +43,10 @@
             alert("已變更，請重新整理前台頁面...", 800);
         }
     }
-    $(".thumbnail").each(function(){
+    $(".image").each(function(){
         var th = $(this).data("thumbnail");
         if (th == "") return;
-        if ($(this).data("in-datastore") == "false" || th.indexOf("assets/themes/") > -1 || th.indexOf("/assets/themes/") > -1){
-           $(this).css({"background-image": "url(" + $(this).data("thumbnail") + ")"});
-        }else{
-           $(this).css({"background-image": "url(/themes/" + $(this).data("theme-name") + "/" + $(this).data("thumbnail") + ")"});
-        }
+        $(this).css({"background-image": "url(" + $(this).data("thumbnail") + ")"});
     })
 </script>
 {%- endblock %}
